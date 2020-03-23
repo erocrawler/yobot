@@ -1,5 +1,6 @@
 *.py[cdo]
 .vscode/
+src/.idea
 src/client/*.bat
 src/client/*.sh
 src/client/*/

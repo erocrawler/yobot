@@ -44,7 +44,7 @@ def main():
    __/ |
   |___/
 ==============================""")
-    print("正在初始化...")
+    print(u"正在初始化...")
 
     if os.path.exists("yobot_config.json"):
         with open("yobot_config.json", "r") as f:
@@ -52,10 +52,10 @@ def main():
         token = config.get("access_token", None)
         if token is None:
             print("*************************************************")
-            print("警告：没有设置access_token，这会直接暴露机器人接口")
-            print("这意味着允许机器人执行任何人的请求，造成安全隐患")
-            print("请在yobot_config.json文件中修改access_token项")
-            print("并使其与httpapi中的access_token保持一致")
+            print(u"警告：没有设置access_token，这会直接暴露机器人接口")
+            print(u"这意味着允许机器人执行任何人的请求，造成安全隐患")
+            print(u"请在yobot_config.json文件中修改access_token项")
+            print(u"并使其与httpapi中的access_token保持一致")
             print("*************************************************")
             # input("（按回车继续）")
     else:
@@ -105,7 +105,7 @@ def main():
                          misfire_grace_time=60)
         sche.start()
 
-    print("初始化完成，启动服务...")
+    print(u"初始化完成，启动服务...")
 
     cqbot.run(
         host=host,

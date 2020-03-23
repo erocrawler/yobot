@@ -11,6 +11,7 @@ import time
 
 class Lock():
 
+    lock_time = 600
     txt_list = []
 
     def __init__(self, baseinfo, basepath):
@@ -69,19 +70,22 @@ class Lock():
                     self._data[self._groupid][2],
                     bef // 60,
                     bef % 60))
-                if bef > 180:
+                if bef > self.lock_time:
                     self.txt_list.append("你可以发送“踢出队列”将其踢出")
                 else:
-                    self.txt_list.append("{}秒后你可以将其踢出".format(180-bef))
+                    self.txt_list.append("{}秒后你可以将其踢出，或请管理强制踢出".format(self.lock_time-bef))
 
-    def _delete_lock(self):
+    def _delete_lock(self, role):
         if self._data.get(self._groupid, [0])[0] == 0:
             self.txt_list.append("boss没有被锁定")
         else:
             bef = int(time.time()) - self._data[self._groupid][3]
-            if bef > 180:
+            if bef > self.lock_time or role < 3:
                 del self._data[self._groupid]
-                self.txt_list.append("boss已解锁")
+                if role < 3:
+                    self.txt_list.append("boss已由管理员强制解锁")
+                else:
+                    self.txt_list.append("boss已解锁")
                 self._save()
             else:
                 self.txt_list.append(
@@ -89,7 +93,7 @@ class Lock():
                         self._data[self._groupid][2],
                         bef // 60,
                         bef % 60,
-                        180 - bef))
+                        self.lock_time - bef))
 
     def boss_challenged(self):
         if self._data.get(self._groupid, [0])[0] == 0:
@@ -121,7 +125,7 @@ class Lock():
             return 3  # 他人解锁
         return 0
 
-    def lockboss(self, cmd, func_num=None, comment=None):
+    def lockboss(self, cmd, func_num=None, comment=None, role=3):
         if func_num == None:
             func_num = self.match(cmd)
         if func_num == 1:
@@ -129,9 +133,9 @@ class Lock():
         elif func_num == 2:
             self._cancel_lock()
         elif func_num == 3:
-            self._delete_lock()
+            self._delete_lock(role)
         elif func_num == 0:
-            self.txt_list.append("lok参数错误")
+            self.txt_list.append("lock参数错误")
 
     def text(self):
         return "\n".join(self.txt_list)

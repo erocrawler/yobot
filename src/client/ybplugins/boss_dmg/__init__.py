@@ -47,20 +47,20 @@ class Boss_dmg:
             cmt = None
         else:
             cmt = cmdi[1]
+        super_admins = self.setting.get("super-admin", list())
+        if msg["sender"]["user_id"] in super_admins:
+                role = 0
+        else:
+            role_str = msg["sender"].get("role", None)
+            if role_str == "owner":
+                role = 1
+            elif role_str == "admin":
+                role = 2
+            else:
+                role = 3
         if (cmd.startswith("重新开始") or cmd.startswith("选择") or cmd.startswith("切换")
                 or cmd.startswith("修正") or cmd.startswith("修改") or cmd == "上传报告"):
-            super_admins = self.setting.get("super-admin", list())
             restrict = self.setting.get("setting-restrict", 3)
-            if msg["sender"]["user_id"] in super_admins:
-                role = 0
-            else:
-                role_str = msg["sender"].get("role", None)
-                if role_str == "owner":
-                    role = 1
-                elif role_str == "admin":
-                    role = 2
-                else:
-                    role = 3
             if role > restrict:
                 reply = "你的权限不足"
                 return {"reply": reply, "block": True}
@@ -68,7 +68,7 @@ class Boss_dmg:
         basepath = self.setting["dirname"]
         if swit == 0x1000:
             lockboss = lock_boss.Lock(cmd_list[:3], basepath)
-            lockboss.lockboss(cmd, func, comment=cmt)
+            lockboss.lockboss(cmd, func, comment=cmt, role=role)
             txt_list.extend(lockboss.txt_list)
         if swit == 0x2000:
             report = dmg_record.Record(cmd_list[:3], basepath)
